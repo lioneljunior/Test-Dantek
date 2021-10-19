@@ -1,0 +1,113 @@
+<div class="container">
+  <div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom">
+    <h1 class="h2">{{ 'langues' | translate }}</h1>
+    <div class="btn-toolbar mb-2 mb-md-0">
+      <div class="btn-group me-2">
+        <button *ngFor="let lang of Lang" (click)="useLanguage(lang)" type="button" class="btn btn-sm btn-outline-secondary" [ngClass]="{'active': currentLang === lang, '': currentLang != lang}">{{ lang | translate }}</button>
+        <button class="btn" [ngClass]="{'btn-danger': !modalState, 'btn-success': modalState}">  </button>
+      </div>
+    </div>
+  </div> <!-- Entete / langues / indicateur de l'etat de la modal -->
+  <div>
+    <h4>{{ 'ajouterLangue' | translate }}</h4>
+    <form [formGroup]="langForm" class="row g-3">
+      <div class="col-md-6">
+        <label class="form-label">{{ 'choisirLangue' | translate }}</label>
+        <select class="form-select" formControlName="lang">
+          <option *ngFor="let lang of Lang" [value]="lang">{{ lang | translate }}</option>
+        </select>
+      </div>
+      <div class="col-md-6">
+        <label class="form-label">{{ 'niveauParle' | translate }}</label>
+        <select class="form-select" formControlName="writeLevel">
+          <option *ngFor="let level of Level" [value]="level">{{ level | translate }}</option>
+        </select>
+      </div>
+      <div class="col-md-6">
+        <label class="form-label">{{ 'niveauEcris' | translate }}</label>
+        <select class="form-select" formControlName="speakLevel">
+          <option *ngFor="let level of Level" [value]="level">{{ level | translate }}</option>
+        </select>
+      </div>
+      <div class="col-md-6">
+        <label class="form-label">{{ 'comprehension' | translate }}</label>
+        <select class="form-select" formControlName="understand">
+          <option *ngFor="let level of Level" [value]="level">{{ level | translate }}</option>
+        </select>
+      </div>
+      <div class="col-12">
+        <button (click)="save()" class="btn btn-primary" type="submit" [disabled]="langForm.invalid">{{ 'enregistrer' | translate }}</button>
+      </div>
+      <p *ngIf="!modalState && error" class="text-danger">{{ error | translate }}</p>
+    </form>
+  </div> <!-- Formulaire d'ajout de langue -->
+  <div class="mt-4">
+    <h4 class="pb-3 border-bottom">{{ 'listeLangue' | translate }} ({{ LangList.length }})</h4>
+    <div *ngFor="let langList of LangList;let i = index" class="p-3 bg-light row mb-3">
+      <div class="col">{{ langList.lang | translate }}</div>
+      <div class="col">{{ 'niveauParle' | translate }} : <span class="text-muted">{{ langList.speakLevel | translate }}</span></div>
+      <div class="col">{{ 'niveauEcris' | translate }} : <span class="text-muted">{{ langList.writeLevel | translate }}</span></div>
+      <div class="col">{{ 'comprehension' | translate }} : <span class="text-muted">{{ langList.understand | translate }}</span></div>
+      <div class="col-lg-3 col-md-12 col-sm-12 col-xs-12 justify-content-md-center">
+        <button (click)="getLang(langList.lang)" class="btn btn-success btn-sm mx-1" data-bs-toggle="modal" data-bs-target="#staticBackdropLive2">{{ 'modifier' | translate }}</button>
+        <button (click)="getLang(langList.lang)" class="btn btn-warning btn-sm" data-bs-toggle="modal" data-bs-target="#staticBackdropLive">{{ 'detail' | translate }}</button>
+        <button (click)="deleteLang(langList.lang)"class="btn btn-danger btn-sm mx-1">{{ 'supprimer' | translate }}</button>
+      </div>
+    </div>
+  </div> <!-- Liste des langues choisis -->
+  <div class="modal fade" id="staticBackdropLive" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLiveLabel" aria-hidden="true">
+    <div class="modal-dialog">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" id="staticBackdropLiveLabel">Details</h5>
+          <button type="button" (click)="changeState()" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <div class="modal-body">
+          <p><strong class="h4">{{ selectedLang.lang | translate }}</strong><br><strong>{{ 'niveauEcris' | translate }} :</strong> {{ selectedLang.writeLevel | translate }}<br><strong>{{ 'niveauParle' | translate }} :</strong> {{ selectedLang.speakLevel | translate }}<br><strong>{{ 'comprehension' | translate }} :</strong> {{ selectedLang.understand | translate }}</p>
+        </div>
+      </div>
+    </div>
+  </div> <!-- modal de detail -->
+  <div class="modal fade" id="staticBackdropLive2" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLiveLabel2" aria-hidden="true">
+    <div class="modal-dialog">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" id="staticBackdropLiveLabel">{{ 'modifier' | translate}}</h5>
+          <button type="button" (click)="changeState()" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <div class="modal-body">
+          <form [formGroup]="langForm" class="g-3">
+            <div>
+              <label class="form-label">{{ 'choisirLangue' | translate }}</label>
+              <select class="form-select" formControlName="lang">
+                <option *ngFor="let lang of Lang" [value]="lang">{{ lang | translate }}</option>
+              </select>
+            </div>
+            <div>
+              <label class="form-label">{{ 'niveauParle' | translate }}</label>
+              <select class="form-select" formControlName="writeLevel">
+                <option *ngFor="let level of Level" [value]="level">{{ level | translate }}</option>
+              </select>
+            </div>
+            <div>
+              <label class="form-label">{{ 'niveauEcris' | translate }}</label>
+              <select class="form-select" formControlName="speakLevel">
+                <option *ngFor="let level of Level" [value]="level">{{ level | translate }}</option>
+              </select>
+            </div>
+            <div>
+              <label class="form-label">{{ 'comprehension' | translate }}</label>
+              <select class="form-select" aria-placeholder="selectedLang.understand" formControlName="understand">
+                <option *ngFor="let level of Level" [value]="level">{{ level | translate }}</option>
+              </select>
+            </div>
+            <div class="col-12 mt-2">
+              <button (click)="update()" class="btn btn-primary" type="submit" [disabled]="langForm.invalid" data-bs-dismiss="modal" aria-label="Close">{{ 'enregistrer' | translate }}</button>
+            </div>
+            <p class="text-danger">{{ error | translate }}</p>
+          </form>
+        </div>
+      </div>
+    </div>
+  </div> <!-- modal de modification -->
+</div>
